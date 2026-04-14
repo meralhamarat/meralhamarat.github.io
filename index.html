@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink: #0d0d0d;
+  --paper: #f0ece2;
+  --aged: #e8e2d0;
+  --gold: #c9a84c;
+  --gold-dim: #8a6d2e;
+  --crimson: #8b1a1a;
+  --emerald: #1a5c3a;
+  --slate: #2c3e50;
+  --mist: #6b7280;
+  --glow: rgba(201,168,76,0.15);
+  --pixel: 'Press Start 2P', monospace;
+  --display: 'VT323', monospace;
+  --body: 'Rajdhani', sans-serif;
+  --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── LOADING SCREEN ── */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #080808;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+  transition: opacity 0.8s ease;
+}
+#loading-screen.fade-out { opacity: 0; pointer-events: none; }
+
+.boot-logo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  color: #c9a84c;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 2.2;
+  text-shadow: 0 0 20px rgba(201,168,76,0.6);
+  animation: flicker 3s infinite;
+}
+.boot-logo .big { font-size: 18px; display: block; margin-bottom: 8px; }
+
+@keyframes flicker {
+  0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.7} 94%{opacity:1} 97%{opacity:0.9}
+}
+
+.boot-bar-wrap {
+  width: 260px;
+  border: 2px solid #c9a84c;
+  padding: 3px;
+}
+.boot-bar-inner {
+  height: 10px;
+  background: #c9a84c;
+  width: 0%;
+  transition: width 2s ease;
+  box-shadow: 0 0 8px rgba(201,168,76,0.8);
+}
+
+.boot-text {
+  font-family: var(--pixel);
+  font-size: 7px;
+  color: #555;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── NAV ── */
+#main-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,13,13,0.95);
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 52px;
+  backdrop-filter: blur(8px);
+}
+
+.nav-logo {
+  font-family: var(--pixel);
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+.nav-links {
+  display: flex; gap: 6px;
+}
+
+.nav-btn {
+  font-family: var(--pixel);
+  font-size: 7px;
+  color: #888;
+  background: none;
+  border: 1px solid #333;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-btn:hover, .nav-btn.active {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  background: rgba(201,168,76,0.08);
+}
+
+.nav-xp {
+  display: flex; align-items: center; gap: 8px;
+}
+.xp-label { font-family: var(--pixel); font-size: 6px; color: #555; }
+.xp-bar { width: 80px; height: 6px; background: #222; border: 1px solid #333; }
+.xp-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.8s ease; }
+.xp-val { font-family: var(--pixel); font-size: 6px; color: var(--gold); min-width: 48px; }
+
+/* ── SECTIONS ── */
+.section {
+  min-height: 100vh;
+  padding: 80px 24px 60px;
+  display: none;
+}
+.section.active { display: block; }
+
+/* ── HOME ── */
+#section-home {
+  background: #080808;
+  position: relative;
+  overflow: hidden;
+}
+.map-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: map-scroll 20s linear infinite;
+}
+@keyframes map-scroll { to { background-position: 40px 40px; } }
+
+.hero-center {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 14vh;
+  text-align: center;
+}
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(60px, 10vw, 110px);
+  color: var(--paper);
+  line-height: 0.95;
+}
+.hero-title .accent { color: var(--gold); }
+.hero-subtitle {
+  font-family: var(--display);
+  font-size: 28px;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  font-family: var(--pixel); font-size: 8px; color: #080808; background: var(--gold);
+  border: none; padding: 14px 24px; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+/* ── ABOUT ── */
+.char-portrait {
+  width: 140px; height: 140px; background: var(--ink); border: 3px solid var(--gold-dim);
+  display: flex; align-items: center; justify-content: center; font-size: 60px;
+  position: relative; clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%);
+}
+.char-portrait::after {
+  content: 'LVL 4'; position: absolute; bottom: -1px; right: -1px;
+  background: var(--gold); color: #080808; font-family: var(--pixel); font-size: 6px; padding: 3px 6px;
+}
+
+.stat-block { background: var(--aged); padding: 20px; margin-bottom: 20px; }
+.stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.stat-name { font-family: var(--body); font-weight: 600; min-width: 110px; }
+.stat-bar-wrap { flex: 1; height: 6px; background: rgba(13,13,13,0.12); }
+.stat-bar { height: 100%; background: var(--gold); width: 0%; transition: width 1.2s ease; }
+
+/* ── MODAL & TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--ink); color: var(--paper); padding: 14px 20px;
+  font-family: var(--pixel); font-size: 7px; border-left: 3px solid var(--gold);
+  transform: translateX(120%); transition: transform 0.3s;
+}
+#toast.show { transform: translateX(0); }
+
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="boot-logo">
+    <span class="big">⚔ MERAL_OS v4.0 ⚔</span>
+    İLKEL VERİLER YÜKLENİYOR...<br>
+    YAPAY ZEKA MODÜLLERİ HAZIRLANIYOR...
+  </div>
+  <div class="boot-bar-wrap"><div class="boot-bar-inner" id="boot-bar"></div></div>
+  <div class="boot-text">DEVAM ETMEK İÇİN TIKLAYIN</div>
+</div>
+
+<nav id="main-nav" style="display:none">
+  <div class="nav-logo">⚔ MERAL HAMARAT</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="navigate('home')">DÜNYA HARİTASI</button>
+    <button class="nav-btn" onclick="navigate('about')">KARAKTER</button>
+    <button class="nav-btn" onclick="navigate('quests')">GÖREV KÜTÜĞÜ</button>
+  </div>
+  <div class="nav-xp">
+    <span class="xp-label">XP</span>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+    <span class="xp-val" id="xp-val">0 / 1000</span>
+  </div>
+</nav>
+
+<section id="section-home" class="section active">
+  <div class="map-grid"></div>
+  <div class="hero-center">
+    <div class="hero-title">MERAL<br><span class="accent">HAMARAT</span></div>
+    <div class="hero-subtitle">AI & Computer Vision Artificer</div>
+    <button class="btn-primary" onclick="navigate('quests')">▶ GÖREVLERİ GÖR</button>
+  </div>
+</section>
+
+<section id="section-about" class="section">
+  <div style="display:flex; gap:32px; margin-bottom:40px;">
+    <div class="char-portrait">👩‍💻</div>
+    <div>
+      <h1 style="font-family:var(--display); font-size:48px;">Meral Hamarat</h1>
+      <span style="font-family:var(--pixel); font-size:8px; color:var(--gold);">★ SINIF: BİLGİSAYAR MÜHENDİSİ  ·  SEVİYE: 4</span>
+      <p style="max-width:600px; margin-top:15px; color:#555;">Teknoloji tutkunu, öğrenmeye aç ve sürekli kendini geliştiren bir mühendis adayıyım. Görüntü işleme ve veri bilimi ile dijital dünyayı anlamlandırıyorum[cite: 3, 4, 5].</p>
+    </div>
+  </div>
+
+  <div class="stat-block">
+    <div class="stat-row"><span class="stat-name">Yapay Zeka (AI)</span><div class="stat-bar-wrap"><div class="stat-bar" style="width:92%"></div></div></div>
+    <div class="stat-row"><span class="stat-name">Görüntü İşleme</span><div class="stat-bar-wrap"><div class="stat-bar" style="width:88%"></div></div></div>
+    <div class="stat-row"><span class="stat-name">Veri Bilimi</span><div class="stat-bar-wrap"><div class="stat-bar" style="width:80%"></div></div></div>
+    <div class="stat-row"><span class="stat-name">Mobil Geliştirme</span><div class="stat-bar-wrap"><div class="stat-bar" style="width:75%"></div></div></div>
+  </div>
+
+  <div class="stat-block">
+    <h3 style="font-family:var(--pixel); font-size:10px; margin-bottom:15px;">KUŞANILMIŞ SİLAHLAR (YETENEKLER)</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">PYTHON</span>
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">OPENCV</span>
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">YOLO</span>
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">C# / ASP.NET</span>
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">FLUTTER</span>
+      <span style="background:var(--paper); padding:5px 10px; font-family:var(--pixel); font-size:6px;">SQL</span>
+    </div>
+  </div>
+</section>
+
+<section id="section-quests" class="section">
+  <div id="quests-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+    </div>
+</section>
+
+<div id="toast">
+  <span id="toast-title" style="color:var(--gold); display:block;">BAŞARI KAZANILDI</span>
+  <span id="toast-body"></span>
+</div>
+
+<script>
+const QUESTS = [
+  { id:1, title: 'AI & Image Processing Intern', type: 'INTERNSHIP', cat: 'ai', diff: 'rare', xp: '+400 XP', desc: 'AYVOS Bilgi Teknolojileri bünyesinde nesne tespiti, poz kestirimi ve YOLO/CNN modelleri üzerine çalışmalar[cite: 16, 17, 20].', tech: ['Python', 'OpenCV', 'YOLO', 'CNN'], year: '2025' },
+  { id:2, title: 'Internet Banking App', type: 'FULL-STACK', cat: 'web', diff: 'epic', xp: '+350 XP', desc: 'ASP.NET MVC ile geliştirilmiş, çoklu şube ve personel yönetimi içeren bankacılık sistemi[cite: 23, 24, 25].', tech: ['C#', 'SQL', 'ASP.NET MVC', 'Razor'], year: '2024' },
+  { id:3, title: 'Cancer Risk Prediction', type: 'DATA SCIENCE', cat: 'tool', diff: 'rare', xp: '+300 XP', desc: 'Sağlık verileri analiz edilerek kanser riski tahmini yapan makine öğrenmesi modeli[cite: 28, 29, 30].', tech: ['Python', 'Scikit-learn', 'Pandas'], year: '2024' }
+];
+
+let xp = 0;
+const xpFill = document.getElementById('xp-fill');
+const xpVal  = document.getElementById('xp-val');
+
+function addXP(amount, reason) {
+  xp = Math.min(xp + amount, 1000);
+  xpFill.style.width = (xp / 10) + '%';
+  xpVal.textContent  = xp + ' / 1000';
+}
+
+function navigate(target) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + target).classList.add('active');
+  if(target === 'about') addXP(50, 'Karakter incelendi');
+}
+
+function buildQuests() {
+  const grid = document.getElementById('quests-grid');
+  QUESTS.forEach(q => {
+    const card = document.createElement('div');
+    card.style.cssText = "background:var(--aged); padding:20px; border:1px solid #ccc; cursor:pointer;";
+    card.innerHTML = `
+      <div style="font-family:var(--pixel); font-size:6px; color:var(--gold-dim); margin-bottom:10px;">${q.type} · ${q.year}</div>
+      <div style="font-family:var(--display); font-size:24px; margin-bottom:10px;">${q.title}</div>
+      <p style="font-size:13px; color:#666;">${q.desc}</p>
+      <div style="margin-top:15px; display:flex; gap:5px; flex-wrap:wrap;">
+        ${q.tech.map(t => `<span style="font-family:var(--pixel); font-size:5px; background:#fff; padding:3px 6px;">${t}</span>`).join('')}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+window.addEventListener('load', () => {
+  const bar = document.getElementById('boot-bar');
+  setTimeout(() => bar.style.width = '100%', 100);
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('fade-out');
+    document.getElementById('main-nav').style.display = 'flex';
+    buildQuests();
+  }, 2500);
+});
+</script>
+</body>
+</html>
