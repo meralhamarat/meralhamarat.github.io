@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js'></script>
 <script type='text/javascript'>
-Countly.init({
-  app_key: "52e2fcb7af6008340feb1e9606dae3a4ccd301ed",
-  url: "https://meral-89ad0bb6ca4c3.flex.countly.com"
-});
-Countly.track_sessions();
-Countly.track_pageview();
+var Countly = Countly || {};
+Countly.q = Countly.q || [];
+Countly.app_key = "52e2fcb7af6008340feb1e9606dae3a4ccd301ed";
+Countly.url = "https://meral-89ad0bb6ca4c3.flex.countly.com";
+Countly.q.push(['track_sessions']);
+Countly.q.push(['track_pageview']);
+
+(function() {
+  var cly = document.createElement('script');
+  cly.type = 'text/javascript';
+  cly.async = true;
+  cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(cly, s);
+})();
 </script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Rajdhani:wght@300;400;500;600;700&display=swap');
