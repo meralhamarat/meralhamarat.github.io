@@ -36,7 +36,1693 @@ window.addEventListener('load', function() {
   --display: 'VT323', monospace;
   --body: 'Rajdhani', sans-serif;
   --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px);
+}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MERAL HAMARAT · Portfolio Quest</title>
+
+<!-- Countly Analytics -->
+<script>
+window.addEventListener('load', function() {
+  var cly = document.createElement('script');
+  cly.type = 'text/javascript'; cly.async = true;
+  cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
+  cly.onload = function() {
+    Countly.init({ app_key: "52e2fcb7af6008340feb1e9606dae3a4ccd301ed", url: "https://meral-89ad0bb6ca4c3.flex.countly.com" });
+    Countly.track_sessions();
+  };
+  document.head.appendChild(cly);
+});
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════
+   CSS VARIABLES & RESET
+══════════════════════════════════════════ */
+:root {
+  /* Cozy Ghibli palette */
+  --cozy-sky:    #a8d8ea;
+  --cozy-leaf:   #aaecba;
+  --cozy-wood:   #7b5e57;
+  --cozy-paper:  #fdf6e3;
+  --cozy-accent: #ff9a9e;
+
+  /* Retro-pixel palette */
+  --ink:         #1a1008;
+  --gold:        #c9a84c;
+  --gold-dim:    #8a6d2e;
+  --gold-glow:   rgba(201,168,76,0.18);
+  --crimson:     #8b1a1a;
+  --aged:        #f0e6c8;
+  --mist:        #6b7280;
+  --shadow:      rgba(26,16,8,0.18);
+
+  /* Fonts */
+  --pixel:   'Press Start 2P', monospace;
+  --display: 'VT323', monospace;
+  --body:    'Rajdhani', sans-serif;
+
+  /* Spacing */
+  --nav-h: 56px;
 }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cozy-paper);
+  color: var(--ink);
+  font-family: var(--body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════
+   CHARACTER CREATION MODAL
+══════════════════════════════════════════ */
+#char-creation {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(26,16,8,0.92);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.char-modal {
+  background: var(--cozy-paper);
+  border: 3px solid var(--gold);
+  max-width: 480px; width: 100%;
+  padding: 32px 24px;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  animation: modal-in 0.4s ease;
+}
+
+@keyframes modal-in {
+  from { transform: scale(0.85) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);       opacity: 1; }
+}
+
+.char-modal h2 {
+  font-family: var(--display);
+  font-size: clamp(28px, 6vw, 40px);
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 6px;
+  text-shadow: 0 0 20px var(--gold-glow);
+}
+
+.char-modal p {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--mist);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.char-label {
+  font-family: var(--pixel);
+  font-size: 7px;
+  color: var(--gold-dim);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.char-input {
+  width: 100%;
+  background: var(--aged);
+  border: 2px solid var(--gold-dim);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 14px;
+  outline: none;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+.char-input:focus { border-color: var(--gold); }
+
+.class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.class-btn {
+  background: var(--aged);
+  border: 2px solid transparent;
+  padding: 12px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: var(--pixel);
+  font-size: 6px;
+  color: var(--mist);
+  line-height: 2;
+}
+.class-btn .class-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+.class-btn:hover, .class-btn.selected {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+  color: var(--gold);
+}
+
+.btn-start {
+  width: 100%;
+  font-family: var(--pixel);
+  font-size: 9px;
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  padding: 16px;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: filter 0.15s;
+}
+.btn-start:hover { filter: brightness(1.12); }
+
+/* ══════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 9000;
+  background: #0a0604;
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px;
+}
+#loading-screen.visible { display: flex; }
+
+.boot-logo {
+  font-family: var(--pixel);
+  font-size: clamp(8px, 2vw, 12px);
+  color: var(--gold);
+  text-align: center;
+  line-height: 2.4;
+  text-shadow: 0 0 24px rgba(201,168,76,0.7);
+  animation: flicker 3s infinite;
+}
+.boot-logo .big { font-size: clamp(14px, 3.5vw, 20px); display: block; margin-bottom: 10px; }
+
+@keyframes flicker {
+  0%,100%{opacity:1} 90%{opacity:1} 92%{opacity:0.6} 93%{opacity:1} 97%{opacity:0.8} 98%{opacity:1}
+}
+
+.boot-bar-wrap { width: min(280px, 80vw); border: 2px solid var(--gold); padding: 3px; }
+.boot-bar-inner {
+  height: 10px; background: var(--gold); width: 0%;
+  transition: width 2.2s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 10px rgba(201,168,76,0.8);
+}
+.boot-msg { font-family: var(--pixel); font-size: 7px; color: #555; text-align: center; }
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+#main-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  background: rgba(10,6,4,0.96);
+  border-bottom: 1px solid var(--gold-dim);
+  height: var(--nav-h);
+  display: none;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+}
+#main-nav.visible { display: flex; }
+
+.nav-logo {
+  font-family: var(--pixel);
+  font-size: clamp(6px, 1.5vw, 8px);
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex; gap: 4px;
+  overflow-x: auto; flex: 1;
+  scrollbar-width: none;
+  padding: 0 4px;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+
+.nav-btn {
+  font-family: var(--pixel);
+  font-size: clamp(5px, 1.2vw, 7px);
+  color: #777;
+  background: none;
+  border: 1px solid #2a2a2a;
+  padding: 7px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  min-height: 36px;
+  touch-action: manipulation;
+}
+.nav-btn:hover, .nav-btn.active {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  background: var(--gold-glow);
+}
+
+.nav-xp-area {
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.xp-label-nav { font-family: var(--pixel); font-size: 5px; color: #555; }
+.xp-bar-nav { width: 60px; height: 6px; background: #222; border: 1px solid #333; }
+.xp-fill-nav { height: 100%; background: var(--gold); width: 0%; transition: width 0.7s ease; }
+.level-badge {
+  font-family: var(--pixel); font-size: 6px;
+  background: var(--gold); color: var(--ink);
+  padding: 4px 6px; white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════════ */
+.section {
+  min-height: 100vh;
+  padding-top: var(--nav-h);
+  display: none;
+}
+.section.active { display: block; }
+
+/* ══════════════════════════════════════════
+   HOME SECTION
+══════════════════════════════════════════ */
+#section-home {
+  background: linear-gradient(160deg, #0a0604 0%, #12100e 50%, #0d0b08 100%);
+  position: relative; overflow: hidden;
+}
+
+/* Ghibli sky gradient layer */
+.home-sky {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 60%, rgba(168,216,234,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 20%, rgba(255,154,158,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Animated map grid */
+.map-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: map-scroll 25s linear infinite;
+}
+@keyframes map-scroll { to { background-position: 48px 48px; } }
+
+/* Floating particles */
+.particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: float-up linear infinite;
+  opacity: 0;
+}
+@keyframes float-up {
+  0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-10vh) translateX(30px); opacity: 0; }
+}
+
+.hero-center {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding: calc(var(--nav-h) + 8vh) 20px 60px;
+  text-align: center;
+}
+
+.hero-banner {
+  font-family: var(--pixel);
+  font-size: clamp(6px, 1.5vw, 9px);
+  color: var(--cozy-accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+  animation: blink-banner 2s step-start infinite;
+}
+@keyframes blink-banner { 50% { opacity: 0; } }
+
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(56px, 13vw, 120px);
+  color: var(--cozy-paper);
+  line-height: 0.9;
+  text-shadow: 0 0 40px rgba(201,168,76,0.25), 0 4px 0 rgba(0,0,0,0.5);
+  margin-bottom: 8px;
+}
+.hero-title .accent { color: var(--gold); }
+
+.hero-class {
+  font-family: var(--display);
+  font-size: clamp(22px, 5vw, 34px);
+  color: var(--cozy-sky);
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+
+.hero-desc {
+  font-family: var(--body);
+  font-size: clamp(13px, 2.5vw, 16px);
+  color: #888;
+  max-width: 480px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+}
+
+.btn-primary {
+  font-family: var(--pixel);
+  font-size: clamp(7px, 1.5vw, 9px);
+  color: var(--ink);
+  background: var(--gold);
+  border: none;
+  padding: 14px 22px;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: filter 0.15s, transform 0.1s;
+  touch-action: manipulation;
+  min-height: 44px;
+}
+.btn-primary:hover { filter: brightness(1.12); transform: translateY(-2px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  font-family: var(--pixel);
+  font-size: clamp(7px, 1.5vw, 9px);
+  color: var(--cozy-sky);
+  background: none;
+  border: 1px solid var(--cozy-sky);
+  padding: 13px 22px;
+  cursor: pointer;
+  transition: all 0.15s;
+  touch-action: manipulation;
+  min-height: 44px;
+}
+.btn-secondary:hover {
+  background: rgba(168,216,234,0.1);
+  color: #fff;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  font-family: var(--pixel); font-size: 6px; color: #444;
+  animation: bounce 2s ease infinite;
+  z-index: 2;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-8px)} }
+
+/* ══════════════════════════════════════════
+   ABOUT / CHARACTER SECTION
+══════════════════════════════════════════ */
+#section-about {
+  background: linear-gradient(180deg, var(--cozy-paper) 0%, #ede4c8 100%);
+  padding-bottom: 80px;
+}
+
+.section-header {
+  text-align: center;
+  padding: calc(var(--nav-h) + 40px) 20px 40px;
+}
+.section-header .area-label {
+  font-family: var(--pixel);
+  font-size: clamp(7px, 1.5vw, 9px);
+  color: var(--cozy-accent);
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 10px;
+}
+.section-header h2 {
+  font-family: var(--display);
+  font-size: clamp(40px, 8vw, 64px);
+  color: var(--wood, var(--cozy-wood));
+}
+
+.about-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+/* Character card */
+.char-card {
+  background: var(--aged);
+  border: 2px solid var(--gold-dim);
+  padding: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+
+.char-portrait {
+  width: 100px; height: 100px;
+  background: var(--ink);
+  border: 3px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; flex-shrink: 0;
+  clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 100%, 20% 100%, 0 80%);
+  position: relative;
+}
+.char-portrait::after {
+  content: attr(data-lvl);
+  position: absolute; bottom: -2px; right: -2px;
+  background: var(--gold); color: var(--ink);
+  font-family: var(--pixel); font-size: 5px; padding: 3px 5px;
+}
+
+.char-info { flex: 1; min-width: 0; }
+.char-info h3 {
+  font-family: var(--display);
+  font-size: clamp(28px, 5vw, 38px);
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.char-class-tag {
+  font-family: var(--pixel); font-size: 6px;
+  color: var(--gold); letter-spacing: 0.08em;
+  margin-bottom: 10px; display: block;
+}
+.char-bio {
+  font-size: clamp(13px, 2vw, 15px);
+  color: var(--mist);
+  line-height: 1.6;
+}
+
+/* Stat block */
+.stat-panel {
+  background: var(--aged);
+  border: 2px solid rgba(139,110,46,0.3);
+  padding: 24px;
+}
+.stat-panel h4 {
+  font-family: var(--pixel); font-size: 8px;
+  color: var(--gold-dim);
+  margin-bottom: 20px;
+  letter-spacing: 0.06em;
+}
+.stat-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.stat-name {
+  font-family: var(--body); font-weight: 700;
+  font-size: 14px;
+  min-width: 120px; color: var(--cozy-wood);
+}
+.stat-bar-wrap {
+  flex: 1; height: 7px;
+  background: rgba(26,16,8,0.1);
+  border: 1px solid rgba(26,16,8,0.12);
+}
+.stat-bar {
+  height: 100%; width: 0%;
+  transition: width 1.3s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.stat-bar::after {
+  content: '';
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 4px;
+  background: rgba(255,255,255,0.4);
+}
+.stat-pct {
+  font-family: var(--pixel); font-size: 6px;
+  color: var(--mist); min-width: 30px; text-align: right;
+}
+
+/* Skills grid */
+.skills-panel {
+  background: var(--aged);
+  border: 2px solid rgba(139,110,46,0.3);
+  padding: 24px;
+}
+.skills-panel h4 {
+  font-family: var(--pixel); font-size: 8px;
+  color: var(--gold-dim); margin-bottom: 20px;
+  letter-spacing: 0.06em;
+}
+.skills-grid {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.skill-chip {
+  font-family: var(--pixel); font-size: 6px;
+  padding: 8px 12px;
+  cursor: default;
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.skill-chip::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+}
+.skill-chip:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.chip-python  { background: #3776ab; color: #fff; }
+.chip-cv      { background: #1a5c3a; color: #aaecba; }
+.chip-yolo    { background: #8b1a1a; color: #fdf6e3; }
+.chip-csharp  { background: #68217a; color: #fff; }
+.chip-sql     { background: #336791; color: #fff; }
+.chip-aspnet  { background: #512bd4; color: #fff; }
+.chip-flutter { background: #027dfd; color: #fff; }
+.chip-sklearn { background: #f89939; color: #fff; }
+.chip-pandas  { background: #130754; color: #fff; }
+.chip-docker  { background: #0db7ed; color: #fff; }
+.chip-php     { background: #4f5b93; color: #fff; }
+.chip-git     { background: var(--cozy-wood); color: var(--cozy-paper); }
+
+/* Contact row */
+.contact-panel {
+  background: var(--ink);
+  padding: 24px;
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  justify-content: space-between;
+}
+.contact-link {
+  font-family: var(--pixel); font-size: 6px;
+  color: var(--cozy-sky); text-decoration: none;
+  padding: 8px 12px; border: 1px solid var(--cozy-sky);
+  transition: all 0.15s;
+  min-height: 36px; display: flex; align-items: center; gap: 6px;
+}
+.contact-link:hover {
+  background: rgba(168,216,234,0.12); color: #fff; border-color: #fff;
+}
+.contact-label {
+  font-family: var(--pixel); font-size: 6px;
+  color: #555;
+}
+
+/* ══════════════════════════════════════════
+   QUESTS SECTION
+══════════════════════════════════════════ */
+#section-quests {
+  background: linear-gradient(180deg, #14100c 0%, #1a1208 100%);
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+#section-quests .section-header .area-label { color: var(--cozy-leaf); }
+#section-quests .section-header h2 { color: var(--cozy-paper); }
+
+.quests-container {
+  max-width: 960px; margin: 0 auto; padding: 0 20px;
+}
+
+.quest-filter {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px;
+  justify-content: center;
+}
+.filter-btn {
+  font-family: var(--pixel); font-size: 6px;
+  color: #666; background: none; border: 1px solid #333;
+  padding: 8px 12px; cursor: pointer; transition: all 0.15s;
+  touch-action: manipulation; min-height: 36px;
+}
+.filter-btn:hover, .filter-btn.active {
+  color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow);
+}
+
+.quests-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Quest card */
+.quest-card {
+  background: rgba(253,246,227,0.04);
+  border: 1px solid #2a2016;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.quest-card:hover {
+  border-color: var(--gold-dim);
+  background: rgba(201,168,76,0.04);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px var(--gold-dim);
+}
+
+.quest-card-header {
+  padding: 20px 20px 0;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.quest-icon {
+  font-size: 32px; flex-shrink: 0;
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #2a2016;
+  display: flex; align-items: center; justify-content: center;
+}
+.quest-meta { flex: 1; min-width: 0; }
+
+.quest-type {
+  font-family: var(--pixel); font-size: 5px;
+  letter-spacing: 0.1em; margin-bottom: 6px;
+}
+.quest-title {
+  font-family: var(--display);
+  font-size: clamp(22px, 4vw, 30px);
+  color: var(--cozy-paper);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.quest-year {
+  font-family: var(--pixel); font-size: 5px; color: #555;
+}
+
+.quest-card-body {
+  padding: 16px 20px 0;
+}
+.quest-desc {
+  font-size: clamp(13px, 2vw, 15px);
+  color: #888; line-height: 1.6; margin-bottom: 14px;
+}
+
+.quest-details {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+.quest-card.expanded .quest-details {
+  max-height: 300px; opacity: 1;
+}
+.quest-detail-item {
+  font-size: 13px; color: #777;
+  display: flex; gap: 8px; margin-bottom: 6px;
+  align-items: flex-start;
+}
+.quest-detail-item::before { content: '▸'; color: var(--gold); flex-shrink: 0; }
+
+.quest-card-footer {
+  padding: 14px 20px 20px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+  gap: 10px;
+}
+.quest-tech {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.tech-tag {
+  font-family: var(--pixel); font-size: 5px;
+  background: rgba(255,255,255,0.06);
+  color: #888; padding: 4px 8px;
+  border: 1px solid #333;
+}
+.quest-xp-badge {
+  font-family: var(--pixel); font-size: 6px;
+  background: var(--gold); color: var(--ink);
+  padding: 6px 10px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 4px;
+}
+.quest-xp-badge.earned { background: #1a5c3a; color: var(--cozy-leaf); }
+
+.quest-toggle {
+  font-family: var(--pixel); font-size: 6px; color: var(--gold);
+  text-align: center; padding: 10px;
+  border-top: 1px solid #1a1208;
+  transition: background 0.15s;
+}
+.quest-card:hover .quest-toggle { background: rgba(201,168,76,0.04); }
+
+/* Rarity accents */
+.quest-card[data-diff="legendary"] { border-top: 3px solid #ff9a9e; }
+.quest-card[data-diff="epic"]      { border-top: 3px solid #c9a84c; }
+.quest-card[data-diff="rare"]      { border-top: 3px solid #a8d8ea; }
+.quest-card[data-diff="uncommon"]  { border-top: 3px solid #aaecba; }
+
+/* ══════════════════════════════════════════
+   SKILLS MAP SECTION
+══════════════════════════════════════════ */
+#section-skills {
+  background: linear-gradient(180deg, #0d1a12 0%, #0a1610 100%);
+  padding-bottom: 80px;
+}
+
+#section-skills .section-header .area-label { color: var(--cozy-leaf); }
+#section-skills .section-header h2 { color: var(--cozy-paper); }
+
+.skills-map {
+  max-width: 900px; margin: 0 auto; padding: 0 20px;
+}
+
+.skill-category {
+  margin-bottom: 32px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(170,236,186,0.12);
+  padding: 24px;
+}
+.skill-category h4 {
+  font-family: var(--pixel); font-size: 7px;
+  color: var(--cozy-leaf); margin-bottom: 20px; letter-spacing: 0.08em;
+}
+
+.skill-list { display: flex; flex-direction: column; gap: 14px; }
+.skill-item { display: flex; align-items: center; gap: 12px; }
+.skill-item-name {
+  font-family: var(--body); font-weight: 700; font-size: 15px;
+  color: #ccc; min-width: 110px;
+}
+.skill-item-bar-wrap {
+  flex: 1; height: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.skill-item-bar {
+  height: 100%; width: 0%;
+  transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+}
+.skill-item-level {
+  font-family: var(--pixel); font-size: 5px;
+  color: #555; min-width: 60px; text-align: right;
+}
+
+/* ══════════════════════════════════════════
+   COMPLETION SCREEN
+══════════════════════════════════════════ */
+#completion-screen {
+  position: fixed; inset: 0; z-index: 8000;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 40px 20px;
+  backdrop-filter: blur(8px);
+}
+#completion-screen.visible { display: flex; }
+
+.completion-title {
+  font-family: var(--display);
+  font-size: clamp(48px, 10vw, 80px);
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(201,168,76,0.6);
+  margin-bottom: 8px;
+  animation: pulse-glow 2s ease infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { text-shadow: 0 0 40px rgba(201,168,76,0.6); }
+  50%      { text-shadow: 0 0 80px rgba(201,168,76,0.9), 0 0 120px rgba(201,168,76,0.3); }
+}
+
+.completion-sub {
+  font-family: var(--pixel); font-size: clamp(7px, 1.5vw, 9px);
+  color: var(--cozy-leaf); letter-spacing: 0.1em; margin-bottom: 24px;
+}
+.completion-desc {
+  font-family: var(--body); font-size: 16px; color: #888;
+  max-width: 460px; line-height: 1.7; margin-bottom: 32px;
+}
+.completion-badge {
+  font-size: 64px; margin-bottom: 24px;
+  animation: spin-once 1s ease 0.5s both;
+}
+@keyframes spin-once {
+  from { transform: rotateY(-180deg); opacity: 0; }
+  to   { transform: rotateY(0); opacity: 1; }
+}
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFICATIONS
+══════════════════════════════════════════ */
+#toast-container {
+  position: fixed; bottom: 20px; right: 20px; z-index: 7000;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--ink);
+  border-left: 3px solid var(--gold);
+  padding: 12px 16px;
+  font-family: var(--pixel);
+  font-size: 6px;
+  max-width: 280px;
+  transform: translateX(120%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: auto;
+}
+.toast.show { transform: translateX(0); }
+.toast-title { color: var(--gold); display: block; margin-bottom: 4px; }
+.toast-body  { color: #888; display: block; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+══════════════════════════════════════════ */
+@media (min-width: 600px) {
+  .about-layout { grid-template-columns: 1fr 1fr; }
+  .quests-grid  { grid-template-columns: repeat(2, 1fr); }
+  .char-portrait { width: 120px; height: 120px; }
+}
+
+@media (min-width: 900px) {
+  .about-layout { grid-template-columns: 1fr 1fr; }
+  .quests-grid  { grid-template-columns: repeat(2, 1fr); }
+  .char-card    { grid-column: 1 / -1; }
+  .contact-panel { grid-column: 1 / -1; }
+  .nav-xp-area  { display: flex; }
+}
+
+@media (max-width: 480px) {
+  .char-card    { flex-direction: column; }
+  .char-modal   { padding: 24px 16px; }
+  .class-grid   { grid-template-columns: 1fr 1fr; }
+  .nav-xp-area  { display: none; }
+  .contact-panel { flex-direction: column; align-items: flex-start; }
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     CHARACTER CREATION
+══════════════════════════════════════════ -->
+<div id="char-creation" role="dialog" aria-label="Character Creation" aria-modal="true">
+  <div class="char-modal">
+    <h2>⚔ NEW GAME ⚔</h2>
+    <p>You are about to enter the Portfolio Dungeon of <strong>Meral Hamarat</strong>.<br>Create your explorer profile to begin.</p>
+
+    <label class="char-label" for="player-name">YOUR NAME, TRAVELER</label>
+    <input class="char-input" id="player-name" type="text" placeholder="Enter your name…" maxlength="20" autocomplete="off">
+
+    <label class="char-label">CHOOSE YOUR CLASS</label>
+    <div class="class-grid" role="group" aria-label="Character class selection">
+      <button class="class-btn selected" data-class="Recruiter" aria-pressed="true">
+        <span class="class-icon">🏰</span>
+        RECRUITER
+      </button>
+      <button class="class-btn" data-class="Developer" aria-pressed="false">
+        <span class="class-icon">⚙️</span>
+        DEVELOPER
+      </button>
+      <button class="class-btn" data-class="Researcher" aria-pressed="false">
+        <span class="class-icon">🔬</span>
+        RESEARCHER
+      </button>
+      <button class="class-btn" data-class="Wanderer" aria-pressed="false">
+        <span class="class-icon">🌿</span>
+        WANDERER
+      </button>
+    </div>
+
+    <button class="btn-start" id="btn-start-game" onclick="startGame()">
+      ▶ BEGIN ADVENTURE
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOADING SCREEN
+══════════════════════════════════════════ -->
+<div id="loading-screen" role="status" aria-live="polite">
+  <div class="boot-logo">
+    <span class="big">✦ PORTFOLIO OS v4.0 ✦</span>
+    LOADING WORLD DATA...<br>
+    INITIALIZING AI MODULES...<br>
+    <span id="boot-player-name"></span>
+  </div>
+  <div class="boot-bar-wrap">
+    <div class="boot-bar-inner" id="boot-bar"></div>
+  </div>
+  <div class="boot-msg">PLEASE WAIT...</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════ -->
+<nav id="main-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-logo">⚔ MERAL.OS</div>
+
+  <div class="nav-links" role="list">
+    <button class="nav-btn active" onclick="navigate('home')" aria-current="page">🗺 WORLD MAP</button>
+    <button class="nav-btn" onclick="navigate('about')">👤 CHARACTER</button>
+    <button class="nav-btn" onclick="navigate('quests')">📜 QUESTS</button>
+    <button class="nav-btn" onclick="navigate('skills')">⚗ SKILL TREE</button>
+  </div>
+
+  <div class="nav-xp-area" aria-label="Experience points">
+    <span class="xp-label-nav">XP</span>
+    <div class="xp-bar-nav" role="progressbar" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="0" id="nav-xp-bar">
+      <div class="xp-fill-nav" id="xp-fill-nav"></div>
+    </div>
+    <div class="level-badge" id="level-badge">LVL 1</div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HOME SECTION
+══════════════════════════════════════════ -->
+<section id="section-home" class="section active" aria-label="Home">
+  <div class="home-sky"></div>
+  <div class="map-grid" aria-hidden="true"></div>
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <div class="hero-center">
+    <div class="hero-banner">▶ ENTERING PORTFOLIO DUNGEON ◀</div>
+
+    <h1 class="hero-title">
+      MERAL<br>
+      <span class="accent">HAMARAT</span>
+    </h1>
+
+    <div class="hero-class">AI &amp; Computer Vision Artificer</div>
+    <p class="hero-desc" id="hero-desc-dynamic">
+      Backend/AI Engineer Intern · Computer Engineering Senior at Tekirdağ Namık Kemal University.
+      Specializing in object detection, machine learning pipelines, and scalable backend systems.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="navigate('quests')">▶ VIEW QUESTS</button>
+      <button class="btn-secondary" onclick="navigate('about')">▷ CHARACTER SHEET</button>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">▼ EXPLORE ▼</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ABOUT / CHARACTER SECTION
+══════════════════════════════════════════ -->
+<section id="section-about" class="section" aria-label="About / Character">
+  <div class="section-header">
+    <span class="area-label">★ AREA: CHARACTER HALL ★</span>
+    <h2>CHARACTER SHEET</h2>
+  </div>
+
+  <div class="about-layout">
+
+    <!-- Character portrait + bio -->
+    <div class="char-card" style="grid-column:1/-1">
+      <div class="char-portrait" data-lvl="LVL 4" role="img" aria-label="Meral's character portrait">👩‍💻</div>
+      <div class="char-info">
+        <h3>Meral Hamarat</h3>
+        <span class="char-class-tag">★ CLASS: COMPUTER ENGINEER  ·  YEAR: SENIOR  ·  GPA: 3.13</span>
+        <p class="char-bio">
+          A technology-driven engineer specializing in AI and computer vision. Experienced in building
+          object detection pipelines, RESTful APIs, and machine learning systems. Currently interning as a
+          PHP Backend Engineer at Kafein Technology Solutions, previously at AYVOS Information Technologies
+          as an AI &amp; Computer Vision Intern.
+        </p>
+      </div>
+    </div>
+
+    <!-- Stat bars -->
+    <div class="stat-panel">
+      <h4>⚔ COMBAT STATS</h4>
+      <div class="stat-list">
+        <div class="stat-row">
+          <span class="stat-name">AI &amp; Vision</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="background:var(--cozy-accent)" data-width="92"></div></div>
+          <span class="stat-pct">92</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">Backend Dev</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="background:var(--cozy-sky)" data-width="85"></div></div>
+          <span class="stat-pct">85</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">Data Science</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="background:var(--cozy-leaf)" data-width="80"></div></div>
+          <span class="stat-pct">80</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">Mobile Dev</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="background:var(--gold)" data-width="68"></div></div>
+          <span class="stat-pct">68</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">DevOps</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="background:#888" data-width="55"></div></div>
+          <span class="stat-pct">55</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills chips -->
+    <div class="skills-panel">
+      <h4>⚗ EQUIPPED SPELLS</h4>
+      <div class="skills-grid">
+        <span class="skill-chip chip-python">PYTHON</span>
+        <span class="skill-chip chip-cv">OPENCV</span>
+        <span class="skill-chip chip-yolo">YOLO</span>
+        <span class="skill-chip chip-csharp">C#</span>
+        <span class="skill-chip chip-aspnet">ASP.NET</span>
+        <span class="skill-chip chip-sql">SQL</span>
+        <span class="skill-chip chip-flutter">FLUTTER</span>
+        <span class="skill-chip chip-sklearn">SCIKIT-LEARN</span>
+        <span class="skill-chip chip-pandas">PANDAS</span>
+        <span class="skill-chip chip-docker">DOCKER</span>
+        <span class="skill-chip chip-php">PHP</span>
+        <span class="skill-chip chip-git">GIT</span>
+      </div>
+    </div>
+
+    <!-- Contact links -->
+    <div class="contact-panel" style="grid-column:1/-1">
+      <span class="contact-label">🔗 GUILD CONNECTIONS</span>
+      <a class="contact-link" href="https://github.com/meralhamarat" target="_blank" rel="noopener">
+        ⊞ GITHUB
+      </a>
+      <a class="contact-link" href="https://www.linkedin.com/in/meral-hamarat-a2702b252/" target="_blank" rel="noopener">
+        ⊞ LINKEDIN
+      </a>
+      <a class="contact-link" href="mailto:meralhamarat24@gmail.com">
+        ✉ EMAIL
+      </a>
+      <a class="contact-link" href="tel:+905415704190">
+        ✆ +90 541 570 41 90
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     QUESTS SECTION
+══════════════════════════════════════════ -->
+<section id="section-quests" class="section" aria-label="Quests / Projects">
+  <div class="section-header">
+    <span class="area-label" style="color:var(--cozy-leaf)">★ AREA: QUEST ARCHIVE ★</span>
+    <h2 style="color:var(--cozy-paper)">QUEST LOG</h2>
+  </div>
+
+  <div class="quests-container">
+    <div class="quest-filter" role="group" aria-label="Filter quests">
+      <button class="filter-btn active" data-filter="all">ALL QUESTS</button>
+      <button class="filter-btn" data-filter="internship">INTERNSHIPS</button>
+      <button class="filter-btn" data-filter="project">PROJECTS</button>
+    </div>
+
+    <div class="quests-grid" id="quests-grid" role="list"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SKILL TREE SECTION
+══════════════════════════════════════════ -->
+<section id="section-skills" class="section" aria-label="Skill Tree">
+  <div class="section-header">
+    <span class="area-label">★ AREA: THE ARCANE LIBRARY ★</span>
+    <h2>SKILL TREE</h2>
+  </div>
+
+  <div class="skills-map">
+
+    <div class="skill-category">
+      <h4>🤖 AI &amp; MACHINE LEARNING</h4>
+      <div class="skill-list">
+        <div class="skill-item">
+          <span class="skill-item-name">Object Detection</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-accent)" data-width="90"></div></div>
+          <span class="skill-item-level">MASTER</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">CNN / YOLO</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-accent)" data-width="88"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">Scikit-learn</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-accent)" data-width="80"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">Pose Estimation</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-accent)" data-width="75"></div></div>
+          <span class="skill-item-level">PROFICIENT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-category">
+      <h4>⚙️ BACKEND &amp; INFRASTRUCTURE</h4>
+      <div class="skill-list">
+        <div class="skill-item">
+          <span class="skill-item-name">PHP / REST API</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-sky)" data-width="82"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">ASP.NET MVC</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-sky)" data-width="85"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">Docker</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-sky)" data-width="60"></div></div>
+          <span class="skill-item-level">PROFICIENT</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">SQL</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-sky)" data-width="78"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-category">
+      <h4>🌿 DATA &amp; TOOLS</h4>
+      <div class="skill-list">
+        <div class="skill-item">
+          <span class="skill-item-name">Pandas / NumPy</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-leaf)" data-width="83"></div></div>
+          <span class="skill-item-level">ADVANCED</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">OpenCV</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-leaf)" data-width="90"></div></div>
+          <span class="skill-item-level">MASTER</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">Matplotlib</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-leaf)" data-width="70"></div></div>
+          <span class="skill-item-level">PROFICIENT</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item-name">Flutter / Dart</span>
+          <div class="skill-item-bar-wrap"><div class="skill-item-bar" style="background:var(--cozy-leaf)" data-width="65"></div></div>
+          <span class="skill-item-level">PROFICIENT</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     COMPLETION SCREEN
+══════════════════════════════════════════ -->
+<div id="completion-screen" role="dialog" aria-label="Quest Complete" aria-live="polite">
+  <div class="completion-badge">🏆</div>
+  <div class="completion-title">DUNGEON CLEARED!</div>
+  <div class="completion-sub">★ ACHIEVEMENT UNLOCKED: PORTFOLIO EXPLORER ★</div>
+  <p class="completion-desc">
+    You've explored every area of Meral's portfolio dungeon. You now know her story,
+    her skills, and her quests. The artificer awaits your message!
+  </p>
+  <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:24px;">
+    <a class="btn-primary" href="mailto:meralhamarat24@gmail.com" style="text-decoration:none; color:var(--ink)">
+      ✉ SEND A MESSAGE
+    </a>
+    <button class="btn-secondary" onclick="closeCompletion()">▷ KEEP EXPLORING</button>
+  </div>
+  <div style="font-family:var(--pixel); font-size:6px; color:#444;">
+    TOTAL XP EARNED: <span id="final-xp" style="color:var(--gold)">0</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TOAST CONTAINER
+══════════════════════════════════════════ -->
+<div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+/* ═══════════════════════════════
+   QUEST DATA
+═══════════════════════════════ */
+const QUESTS = [
+  {
+    id: 'kafein',
+    type: 'internship',
+    diff: 'legendary',
+    icon: '🖥️',
+    title: 'PHP Backend Intern',
+    org: 'Kafein Technology Solutions (TT Playstore)',
+    year: 'Feb 2026 – Present',
+    desc: 'Designing and implementing production-level RESTful APIs in PHP. Documenting with Swagger (OpenAPI) and managing containerized development with Docker.',
+    details: [
+      'Design and implement RESTful APIs in PHP for production-level backend services',
+      'Document APIs using Swagger (OpenAPI) specification',
+      'Manage containerized development environment with Docker',
+      'Develop modular, layered architecture to improve maintainability and scalability'
+    ],
+    tech: ['PHP', 'REST API', 'Swagger', 'Docker', 'Layered Architecture'],
+    xp: 500,
+    typeLabel: '⚔ INTERNSHIP · LEGENDARY'
+  },
+  {
+    id: 'ayvos',
+    type: 'internship',
+    diff: 'epic',
+    icon: '🤖',
+    title: 'AI & Computer Vision Intern',
+    org: 'AYVOS Information Technologies',
+    year: 'Jun 2025 – Aug 2025',
+    desc: 'Built real-world computer vision applications using OpenCV and CNN architectures, including object detection (YOLO) pipelines and OCR-based solutions.',
+    details: [
+      'Built computer vision applications using OpenCV and CNN architectures',
+      'Developed object detection pipelines using YOLO models',
+      'Implemented OCR-based text recognition solutions',
+      'Performed data preprocessing, model training, and evaluation using Python'
+    ],
+    tech: ['Python', 'OpenCV', 'YOLO', 'CNN', 'OCR'],
+    xp: 400,
+    typeLabel: '⚔ INTERNSHIP · EPIC'
+  },
+  {
+    id: 'psychonosis',
+    type: 'project',
+    diff: 'rare',
+    icon: '🧠',
+    title: 'Psychonosis – ML Risk Scoring',
+    org: 'Personal Project',
+    year: '2024',
+    desc: 'Trained a machine learning model on 10K synthetic samples for psychiatric risk scoring, with a full end-to-end pipeline from preprocessing to evaluation.',
+    details: [
+      'Trained ML model on 10,000 synthetic samples for psychiatric risk assessment',
+      'Evaluated model performance using ROC-AUC, F1-score, and MCC metrics',
+      'Designed end-to-end pipeline including preprocessing and model evaluation',
+      'Focused on interpretability and responsible AI principles'
+    ],
+    tech: ['Python', 'Pandas', 'Scikit-learn', 'Matplotlib', 'Seaborn'],
+    xp: 300,
+    typeLabel: '🔬 PROJECT · RARE'
+  },
+  {
+    id: 'banking',
+    type: 'project',
+    diff: 'rare',
+    icon: '🏦',
+    title: 'Internet Banking Web App',
+    org: 'Academic Project',
+    year: '2024',
+    desc: 'Developed a multi-user ASP.NET MVC banking application with authentication, transaction management, and a relational database schema.',
+    details: [
+      'Developed multi-user ASP.NET MVC application with authentication modules',
+      'Implemented transaction management with branch and personnel management features',
+      'Designed relational database schema and SQL-based data management',
+      'Used Razor views for dynamic front-end rendering'
+    ],
+    tech: ['C#', 'ASP.NET MVC', 'SQL', 'Razor'],
+    xp: 300,
+    typeLabel: '🏰 PROJECT · RARE'
+  }
+];
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+const STATE = {
+  playerName: '',
+  playerClass: 'Recruiter',
+  xp: 0,
+  level: 1,
+  visitedSections: new Set(),
+  earnedQuests: new Set(),
+  completionShown: false
+};
+const SECTIONS = ['home', 'about', 'quests', 'skills'];
+const XP_PER_LEVEL = [0, 200, 500, 800, 1000];
+
+/* ═══════════════════════════════
+   SESSION STORAGE PERSISTENCE
+═══════════════════════════════ */
+function saveState() {
+  sessionStorage.setItem('meral_state', JSON.stringify({
+    ...STATE,
+    visitedSections: [...STATE.visitedSections],
+    earnedQuests: [...STATE.earnedQuests]
+  }));
+}
+
+function loadState() {
+  const raw = sessionStorage.getItem('meral_state');
+  if (!raw) return false;
+  try {
+    const saved = JSON.parse(raw);
+    Object.assign(STATE, saved);
+    STATE.visitedSections = new Set(saved.visitedSections || []);
+    STATE.earnedQuests = new Set(saved.earnedQuests || []);
+    return true;
+  } catch(e) { return false; }
+}
+
+/* ═══════════════════════════════
+   CHARACTER CREATION
+═══════════════════════════════ */
+document.querySelectorAll('.class-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.class-btn').forEach(b => {
+      b.classList.remove('selected'); b.setAttribute('aria-pressed','false');
+    });
+    btn.classList.add('selected'); btn.setAttribute('aria-pressed','true');
+    STATE.playerClass = btn.dataset.class;
+  });
+});
+
+function startGame() {
+  const input = document.getElementById('player-name').value.trim();
+  STATE.playerName = input || 'Adventurer';
+
+  document.getElementById('char-creation').style.display = 'none';
+  document.getElementById('loading-screen').classList.add('visible');
+  document.getElementById('boot-player-name').textContent =
+    'WELCOME, ' + STATE.playerName.toUpperCase() + ' THE ' + STATE.playerClass.toUpperCase();
+
+  setTimeout(() => {
+    document.getElementById('boot-bar').style.width = '100%';
+  }, 100);
+
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.remove('visible');
+    document.getElementById('main-nav').classList.add('visible');
+    buildQuests();
+    buildParticles();
+    navigate('home', false);
+    addXP(50, 'CHARACTER CREATED', 'Welcome to the dungeon, ' + STATE.playerName + '!');
+    saveState();
+  }, 2800);
+}
+
+/* ═══════════════════════════════
+   XP SYSTEM
+═══════════════════════════════ */
+function addXP(amount, title, body) {
+  const prev = STATE.level;
+  STATE.xp = Math.min(STATE.xp + amount, 1000);
+  STATE.level = calcLevel(STATE.xp);
+
+  updateXPBar();
+  showToast(title || '+XP', body || '+' + amount + ' XP earned!');
+
+  if (STATE.level > prev) {
+    setTimeout(() => {
+      showToast('⬆ LEVEL UP!', 'You are now Level ' + STATE.level + '!');
+    }, 500);
+  }
+
+  checkCompletion();
+  saveState();
+}
+
+function calcLevel(xp) {
+  if (xp >= 1000) return 5;
+  if (xp >= 800)  return 4;
+  if (xp >= 500)  return 3;
+  if (xp >= 200)  return 2;
+  return 1;
+}
+
+function updateXPBar() {
+  const pct = (STATE.xp / 1000) * 100;
+  document.getElementById('xp-fill-nav').style.width = pct + '%';
+  document.getElementById('level-badge').textContent = 'LVL ' + STATE.level;
+  const bar = document.getElementById('nav-xp-bar');
+  if (bar) bar.setAttribute('aria-valuenow', STATE.xp);
+}
+
+function checkCompletion() {
+  if (STATE.completionShown) return;
+  const allVisited = SECTIONS.every(s => STATE.visitedSections.has(s));
+  const allQuests  = QUESTS.every(q => STATE.earnedQuests.has(q.id));
+  if (allVisited && allQuests && STATE.xp >= 800) {
+    STATE.completionShown = true;
+    setTimeout(showCompletion, 800);
+    saveState();
+  }
+}
+
+function showCompletion() {
+  document.getElementById('final-xp').textContent = STATE.xp;
+  document.getElementById('completion-screen').classList.add('visible');
+  confettiDrop();
+}
+
+function closeCompletion() {
+  document.getElementById('completion-screen').classList.remove('visible');
+}
+
+/* ═══════════════════════════════
+   NAVIGATION
+═══════════════════════════════ */
+function navigate(target, earnXP = true) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.remove('active'); b.removeAttribute('aria-current');
+  });
+
+  const sec = document.getElementById('section-' + target);
+  if (!sec) return;
+  sec.classList.add('active');
+
+  const btn = document.querySelector('.nav-btn[onclick*="' + target + '"]');
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-current','page'); }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (earnXP && !STATE.visitedSections.has(target)) {
+    STATE.visitedSections.add(target);
+    const msgs = {
+      about:  ['AREA DISCOVERED', 'You found the Character Hall! +75 XP'],
+      quests: ['AREA DISCOVERED', 'You found the Quest Archive! +75 XP'],
+      skills: ['AREA DISCOVERED', 'You found the Arcane Library! +75 XP'],
+      home:   ['RETURNED HOME',   'Back at the World Map. +25 XP']
+    };
+    const [title, body] = msgs[target] || ['AREA VISITED', '+50 XP'];
+    addXP(target === 'home' ? 25 : 75, title, body);
+  }
+
+  // Animate stat bars when about section is shown
+  if (target === 'about') animateStatBars();
+  if (target === 'skills') animateSkillBars();
+}
+
+/* ═══════════════════════════════
+   QUEST BUILDER
+═══════════════════════════════ */
+function buildQuests() {
+  const grid = document.getElementById('quests-grid');
+  grid.innerHTML = '';
+
+  QUESTS.forEach(q => {
+    const earned = STATE.earnedQuests.has(q.id);
+    const card = document.createElement('div');
+    card.className = 'quest-card';
+    card.dataset.type = q.type;
+    card.dataset.diff = q.diff;
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-expanded', 'false');
+
+    card.innerHTML = `
+      <div class="quest-card-header">
+        <div class="quest-icon" aria-hidden="true">${q.icon}</div>
+        <div class="quest-meta">
+          <div class="quest-type" style="color:${diffColor(q.diff)}">${q.typeLabel}</div>
+          <div class="quest-title">${q.title}</div>
+          <div class="quest-year">${q.org} · ${q.year}</div>
+        </div>
+      </div>
+      <div class="quest-card-body">
+        <p class="quest-desc">${q.desc}</p>
+        <div class="quest-details" aria-hidden="true">
+          ${q.details.map(d => `<div class="quest-detail-item">${d}</div>`).join('')}
+        </div>
+      </div>
+      <div class="quest-card-footer">
+        <div class="quest-tech">
+          ${q.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}
+        </div>
+        <div class="quest-xp-badge ${earned ? 'earned' : ''}" aria-label="${earned ? 'XP earned' : q.xp + ' XP available'}">
+          ${earned ? '✓ EARNED' : '⚡ +' + q.xp + ' XP'}
+        </div>
+      </div>
+      <div class="quest-toggle" aria-hidden="true">▼ TAP TO EXPAND</div>
+    `;
+
+    card.addEventListener('click', () => toggleQuest(card, q));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleQuest(card, q); }
+    });
+
+    grid.appendChild(card);
+  });
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.quest-card').forEach(c => {
+        c.style.display = (f === 'all' || c.dataset.type === f) ? '' : 'none';
+      });
+    });
+  });
+}
+
+function toggleQuest(card, q) {
+  const expanded = card.classList.toggle('expanded');
+  card.setAttribute('aria-expanded', expanded);
+  const detailsEl = card.querySelector('.quest-details');
+  const toggleEl  = card.querySelector('.quest-toggle');
+  detailsEl.setAttribute('aria-hidden', !expanded);
+  toggleEl.textContent = expanded ? '▲ COLLAPSE' : '▼ TAP TO EXPAND';
+
+  if (expanded && !STATE.earnedQuests.has(q.id)) {
+    STATE.earnedQuests.add(q.id);
+    const badge = card.querySelector('.quest-xp-badge');
+    badge.classList.add('earned');
+    badge.textContent = '✓ EARNED';
+    addXP(q.xp, 'QUEST DISCOVERED', q.title + ' — +' + q.xp + ' XP!');
+  }
+}
+
+function diffColor(diff) {
+  return { legendary: '#ff9a9e', epic: '#c9a84c', rare: '#a8d8ea', uncommon: '#aaecba' }[diff] || '#888';
+}
+
+/* ═══════════════════════════════
+   STAT BAR ANIMATIONS
+═══════════════════════════════ */
+function animateStatBars() {
+  document.querySelectorAll('#section-about .stat-bar').forEach(bar => {
+    const w = bar.dataset.width || '0';
+    setTimeout(() => { bar.style.width = w + '%'; }, 100);
+  });
+}
+
+function animateSkillBars() {
+  document.querySelectorAll('#section-skills .skill-item-bar').forEach(bar => {
+    const w = bar.dataset.width || '0';
+    setTimeout(() => { bar.style.width = w + '%'; }, 100);
+  });
+}
+
+/* ═══════════════════════════════
+   TOAST SYSTEM
+═══════════════════════════════ */
+function showToast(title, body) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span class="toast-title">★ ${title}</span><span class="toast-body">${body}</span>`;
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('show'));
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
+}
+
+/* ═══════════════════════════════
+   PARTICLES
+═══════════════════════════════ */
+function buildParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+    container.appendChild(p);
+  }
+}
+
+/* ═══════════════════════════════
+   CONFETTI (completion)
+═══════════════════════════════ */
+function confettiDrop() {
+  const colors = ['#c9a84c','#a8d8ea','#aaecba','#ff9a9e','#fdf6e3'];
+  for (let i = 0; i < 60; i++) {
+    const dot = document.createElement('div');
+    dot.style.cssText = `
+      position:fixed; z-index:9999; pointer-events:none;
+      width:${4+Math.random()*6}px; height:${4+Math.random()*6}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}vw; top:-10px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation: confetti-fall ${1.5+Math.random()*2}s ${Math.random()*1.5}s ease-in forwards;
+    `;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 4000);
+  }
+
+  if (!document.getElementById('confetti-style')) {
+    const s = document.createElement('style');
+    s.id = 'confetti-style';
+    s.textContent = `@keyframes confetti-fall {
+      to { transform: translateY(105vh) rotate(${Math.random()*720}deg); opacity:0; }
+    }`;
+    document.head.appendChild(s);
+  }
+}
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  // Try to restore session
+  if (loadState() && STATE.playerName) {
+    document.getElementById('char-creation').style.display = 'none';
+    document.getElementById('main-nav').classList.add('visible');
+    buildQuests();
+    buildParticles();
+    updateXPBar();
+    navigate('home', false);
+    // Restore visited quest badges
+    document.querySelectorAll('.quest-card').forEach(card => {
+      const id = [...STATE.earnedQuests].find(eid =>
+        card.querySelector('.quest-title')?.textContent.includes(
+          QUESTS.find(q => q.id === eid)?.title || '___'
+        )
+      );
+    });
+  }
+});
+</script>
+
+</body>
+</html>
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
